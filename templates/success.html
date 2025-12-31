@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+  <div class="rounded-3xl border border-white/10 bg-white/5 p-10 text-center">
+    <div class="text-3xl font-bold">✅ Apmokėjimas pavyko</div>
+    <p class="text-white/60 mt-3">Order ID: <span class="font-mono">{{ order_id }}</span></p>
+    <a class="inline-block mt-6 rounded-2xl px-5 py-3 bg-white text-slate-950 font-medium" href="/">
+      Grįžti į shop
+    </a>
+  </div>
+{% endblock %}

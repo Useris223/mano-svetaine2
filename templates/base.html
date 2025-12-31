@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="lt">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>{{ title }}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-slate-950 text-white">
+  <header class="sticky top-0 z-30 backdrop-blur border-b border-white/10 bg-slate-950/60">
+    <div class="mx-auto max-w-6xl px-4 py-3 flex items-center justify-between">
+      <a href="/" class="flex items-center gap-3">
+        <div class="h-9 w-9 rounded-2xl bg-gradient-to-br from-indigo-500 to-fuchsia-500 shadow"></div>
+        <div>
+          <div class="font-semibold leading-5">Resell Studio</div>
+          <div class="text-xs text-white/60">shop • cart • paypal</div>
+        </div>
+      </a>
+      <a href="/cart" class="rounded-xl px-4 py-2 text-sm bg-white text-slate-950 hover:opacity-90 transition font-medium">
+        Krepšelis
+      </a>
+    </div>
+  </header>
+
+  <main class="mx-auto max-w-6xl px-4 py-10">
+    {% block content %}{% endblock %}
+  </main>
+
+  <script src="/static/app.js"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>
