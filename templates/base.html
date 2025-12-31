@@ -1,70 +1,19 @@
-<!doctype html>
-<html lang="lt">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>{{ title }}</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <meta name="theme-color" content="#0b1220" />
-  <style>
-    .glow {
-      background:
-        radial-gradient(900px 360px at 20% 0%, rgba(99,102,241,.28), transparent 60%),
-        radial-gradient(700px 280px at 90% 10%, rgba(217,70,239,.22), transparent 55%),
-        radial-gradient(900px 320px at 50% 110%, rgba(56,189,248,.16), transparent 60%);
-    }
-    .grain:before{
-      content:"";
-      position:fixed; inset:0;
-      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='.12'/%3E%3C/svg%3E");
-      mix-blend-mode: overlay;
-      pointer-events:none;
-    }
-  </style>
-</head>
+<style>
+  .snow {
+    background-image:
+      radial-gradient(2px 2px at 20px 30px, rgba(255,255,255,.9) 50%, transparent 55%),
+      radial-gradient(2px 2px at 90px 80px, rgba(255,255,255,.75) 50%, transparent 55%),
+      radial-gradient(1.5px 1.5px at 140px 120px, rgba(255,255,255,.85) 50%, transparent 55%),
+      radial-gradient(1.5px 1.5px at 50px 140px, rgba(255,255,255,.65) 50%, transparent 55%),
+      radial-gradient(2px 2px at 160px 40px, rgba(255,255,255,.8) 50%, transparent 55%);
+    background-size: 200px 200px;
+    animation: snowMove 6s linear infinite;
+    opacity: .55;
+    filter: drop-shadow(0 0 6px rgba(255,255,255,.15));
+  }
 
-<body class="min-h-screen bg-slate-950 text-white glow grain">
-  <header class="sticky top-0 z-40 border-b border-white/10 bg-slate-950/65 backdrop-blur">
-    <div class="mx-auto max-w-6xl px-4 py-3 flex items-center justify-between gap-3">
-      <a href="/" class="flex items-center gap-3 group">
-        <img src="/static/logo.svg" alt="Logo" class="h-10 w-10 rounded-2xl shadow group-hover:opacity-95 transition"/>
-        <div class="leading-tight">
-          <div class="font-semibold tracking-tight">TopShopp Deals</div>
-          <div class="text-xs text-white/60">Shop • Cart • PayPal</div>
-        </div>
-      </a>
-
-      <nav class="flex items-center gap-2">
-        <a href="/"
-           class="hidden sm:inline-flex rounded-xl px-4 py-2 text-sm border border-white/10 hover:bg-white/5 transition">
-          Produktai
-        </a>
-        <a href="/cart"
-           class="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm bg-white text-slate-950 hover:opacity-90 transition font-medium">
-          <span>🛒</span>
-          <span>Krepšelis</span>
-        </a>
-      </nav>
-    </div>
-  </header>
-
-  <main class="mx-auto max-w-6xl px-4 py-10">
-    {% block content %}{% endblock %}
-  </main>
-
-  <footer class="mx-auto max-w-6xl px-4 pb-10 text-xs text-white/45">
-    <div class="rounded-3xl border border-white/10 bg-white/5 p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-      <div>
-        <div class="font-medium text-white/70">© {{ year }} TopShopp Deals</div>
-        <div class="mt-1">Demo shop’as. Tikram shop’ui reikės orderių saugojimo ir DB.</div>
-      </div>
-      <div class="text-white/55">
-        <span class="font-mono">Flask</span> • <span class="font-mono">Render</span> • <span class="font-mono">PayPal</span>
-      </div>
-    </div>
-  </footer>
-
-  <script src="/static/app.js"></script>
-  {% block scripts %}{% endblock %}
-</body>
-</html>
+  @keyframes snowMove {
+    from { background-position: 0 0; }
+    to   { background-position: 0 220px; }
+  }
+</style>
