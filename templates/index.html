@@ -1,13 +1,100 @@
 {% extends "base.html" %}
 {% block content %}
-  <h1 class="text-3xl font-bold">Produktai</h1>
-  <p class="text-white/60 mt-2">Pridėk į krepšelį ir apmokėk per PayPal.</p>
+  <section class="grid gap-8 lg:grid-cols-2 items-center">
+    <div>
+      <div class="inline-flex items-center gap-2 text-xs font-medium px-3 py-1 rounded-full bg-white/5 border border-white/10 text-white/80">
+        ✨ Premium look • greitas • tvarkingas shop
+      </div>
 
-  <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-    {% for p in products %}
-      <div class="rounded-3xl border border-white/10 bg-white/5 p-5">
-        <div class="text-xs text-white/60">{{ p.brand }}</div>
-        <div class="mt-1 font-semibold text-lg">{{ p.title }}</div>
+      <h1 class="mt-4 text-4xl md:text-5xl font-bold tracking-tight">
+        Paversk savo
+        <span class="bg-gradient-to-r from-indigo-300 to-fuchsia-300 bg-clip-text text-transparent">shop’ą</span>
+        į brand’ą.
+      </h1>
+
+      <p class="mt-4 text-white/70 leading-relaxed">
+        Gražus dizainas, krepšelis ir PayPal atsiskaitymas. Viską valdai per kodą, o Render hostina.
+      </p>
+
+      <div class="mt-6 flex flex-wrap gap-3">
+        <a href="#products" class="rounded-2xl px-5 py-3 font-medium bg-gradient-to-r from-indigo-500 to-fuchsia-500 shadow hover:opacity-95 transition">
+          Peržiūrėti produktus
+        </a>
+        <a href="/cart" class="rounded-2xl px-5 py-3 font-medium border border-white/10 hover:bg-white/5 transition">
+          Eiti į krepšelį
+        </a>
+      </div>
+
+      <div class="mt-6 grid grid-cols-3 gap-3 text-center">
+        <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+          <div class="text-2xl font-bold">UI</div>
+          <div class="text-xs text-white/60">modern</div>
+        </div>
+        <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+          <div class="text-2xl font-bold">Cart</div>
+          <div class="text-xs text-white/60">session</div>
+        </div>
+        <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+          <div class="text-2xl font-bold">PayPal</div>
+          <div class="text-xs text-white/60">checkout</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="relative">
+      <div class="absolute -inset-6 bg-gradient-to-tr from-indigo-500/25 to-fuchsia-500/20 blur-2xl"></div>
+      <div class="relative rounded-[28px] border border-white/10 bg-white/5 p-6">
+        <div class="text-sm text-white/60">Featured</div>
+        <div class="mt-2 text-2xl font-semibold">Top picks šiandien</div>
+        <div class="mt-4 grid gap-3">
+          <div class="rounded-2xl border border-white/10 bg-slate-950/25 p-4 flex items-center justify-between">
+            <div>
+              <div class="font-medium">Greitas checkout</div>
+              <div class="text-xs text-white/60">PayPal CAPTURE</div>
+            </div>
+            <span class="text-xs px-2 py-1 rounded-full bg-emerald-400/15 text-emerald-200 border border-emerald-400/20">ready</span>
+          </div>
+          <div class="rounded-2xl border border-white/10 bg-slate-950/25 p-4 flex items-center justify-between">
+            <div>
+              <div class="font-medium">Krepšelis</div>
+              <div class="text-xs text-white/60">Session based</div>
+            </div>
+            <span class="text-xs px-2 py-1 rounded-full bg-indigo-400/15 text-indigo-200 border border-indigo-400/20">smooth</span>
+          </div>
+          <div class="rounded-2xl border border-white/10 bg-slate-950/25 p-4 flex items-center justify-between">
+            <div>
+              <div class="font-medium">Tvarkingas dizainas</div>
+              <div class="text-xs text-white/60">Tailwind</div>
+            </div>
+            <span class="text-xs px-2 py-1 rounded-full bg-fuchsia-400/15 text-fuchsia-200 border border-fuchsia-400/20">clean</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="products" class="mt-12">
+    <div class="flex items-end justify-between gap-4 flex-wrap">
+      <div>
+        <h2 class="text-2xl font-semibold">Produktai</h2>
+        <p class="text-sm text-white/60">Spausk “Į krepšelį” ir pereik į apmokėjimą.</p>
+      </div>
+    </div>
+
+    <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {% for p in products %}
+      <div class="rounded-3xl border border-white/10 bg-white/5 p-5 hover:bg-white/[0.07] transition">
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <div class="text-xs text-white/60">{{ p.brand }}</div>
+            <div class="mt-1 font-semibold text-lg">{{ p.title }}</div>
+          </div>
+          {% if p.status == "available" %}
+            <span class="text-xs px-2 py-1 rounded-full border bg-emerald-400/15 text-emerald-200 border-emerald-400/20">available</span>
+          {% else %}
+            <span class="text-xs px-2 py-1 rounded-full border bg-rose-400/15 text-rose-200 border-rose-400/20">{{ p.status }}</span>
+          {% endif %}
+        </div>
 
         <div class="mt-4 grid grid-cols-2 gap-3 text-sm">
           <div class="rounded-2xl border border-white/10 bg-slate-950/20 p-3">
@@ -15,22 +102,36 @@
             <div class="font-semibold">€{{ p.price }}</div>
           </div>
           <div class="rounded-2xl border border-white/10 bg-slate-950/20 p-3">
-            <div class="text-white/50 text-xs">Status</div>
-            <div class="font-semibold">{{ p.status }}</div>
+            <div class="text-white/50 text-xs">Condition</div>
+            <div class="font-semibold">{{ p.condition }}</div>
+          </div>
+          <div class="rounded-2xl border border-white/10 bg-slate-950/20 p-3">
+            <div class="text-white/50 text-xs">Size</div>
+            <div class="font-semibold">{{ p.size }}</div>
+          </div>
+          <div class="rounded-2xl border border-white/10 bg-slate-950/20 p-3">
+            <div class="text-white/50 text-xs">Ship</div>
+            <div class="font-semibold">{{ p.ship }}</div>
           </div>
         </div>
 
         <div class="mt-4 flex gap-2">
-          <button class="rounded-2xl px-4 py-2 text-sm bg-white text-slate-950 font-medium hover:opacity-90 transition"
-                  onclick="addToCart('{{ p.id }}')">
+          <button
+            class="rounded-2xl px-4 py-2 text-sm bg-white text-slate-950 font-medium hover:opacity-90 transition"
+            onclick="addToCart('{{ p.id }}')"
+            {% if p.status != "available" %}disabled{% endif %}
+          >
             Į krepšelį
           </button>
-          <button class="rounded-2xl px-4 py-2 text-sm border border-white/10 hover:bg-white/5 transition"
-                  onclick="location.href='/cart'">
-            Į krepšelį (žiūrėti)
-          </button>
+          <a
+            class="rounded-2xl px-4 py-2 text-sm border border-white/10 hover:bg-white/5 transition"
+            href="/cart"
+          >
+            Atidaryti krepšelį
+          </a>
         </div>
       </div>
-    {% endfor %}
-  </div>
+      {% endfor %}
+    </div>
+  </section>
 {% endblock %}

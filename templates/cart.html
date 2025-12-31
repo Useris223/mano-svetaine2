@@ -1,14 +1,24 @@
 {% extends "base.html" %}
 {% block content %}
-  <h1 class="text-3xl font-bold">Krepšelis</h1>
+  <div class="flex items-end justify-between gap-4 flex-wrap">
+    <div>
+      <h1 class="text-3xl font-bold">Krepšelis</h1>
+      <p class="text-sm text-white/60 mt-1">Keisk kiekius ir apmokėk per PayPal.</p>
+    </div>
+    <a href="/" class="rounded-2xl px-4 py-2 text-sm border border-white/10 hover:bg-white/5 transition">← Atgal</a>
+  </div>
 
-  <div class="mt-6 rounded-3xl border border-white/10 bg-white/5 p-6">
-    {% if items|length == 0 %}
-      <p class="text-white/70">Krepšelis tuščias.</p>
-      <a class="inline-block mt-4 rounded-2xl px-5 py-3 bg-white text-slate-950 font-medium" href="/">Grįžti į shop</a>
-    {% else %}
-      <div class="grid gap-3">
-        {% for it in items %}
+  <div class="mt-6 grid gap-4 lg:grid-cols-3">
+    <div class="lg:col-span-2 rounded-3xl border border-white/10 bg-white/5 p-6">
+      {% if items|length == 0 %}
+        <div class="text-center py-10">
+          <div class="text-2xl font-semibold">Tuščia 🥲</div>
+          <p class="text-white/60 mt-2">Pridėk prekių iš produktų sąrašo.</p>
+          <a class="inline-block mt-6 rounded-2xl px-5 py-3 bg-white text-slate-950 font-medium" href="/">Eiti į produktus</a>
+        </div>
+      {% else %}
+        <div class="grid gap-3">
+          {% for it in items %}
           <div class="flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-slate-950/20 p-4">
             <div>
               <div class="font-semibold">{{ it.title }}</div>
@@ -17,49 +27,49 @@
 
             <div class="text-right">
               <div class="font-semibold">€{{ it.line_total }}</div>
-
               <div class="mt-2 flex gap-2 justify-end">
-                <button
-                  class="px-3 py-1 rounded-xl border border-white/10 hover:bg-white/5"
-                  data-action="dec"
-                  data-id="{{ it.id }}"
-                  data-qty="{{ it.qty }}"
-                >-</button>
-
-                <button
-                  class="px-3 py-1 rounded-xl border border-white/10 hover:bg-white/5"
-                  data-action="inc"
-                  data-id="{{ it.id }}"
-                  data-qty="{{ it.qty }}"
-                >+</button>
+                <button class="px-3 py-1 rounded-xl border border-white/10 hover:bg-white/5"
+                        data-action="dec" data-id="{{ it.id }}" data-qty="{{ it.qty }}">-</button>
+                <button class="px-3 py-1 rounded-xl border border-white/10 hover:bg-white/5"
+                        data-action="inc" data-id="{{ it.id }}" data-qty="{{ it.qty }}">+</button>
               </div>
             </div>
           </div>
-        {% endfor %}
-      </div>
+          {% endfor %}
+        </div>
 
-      <div class="mt-6 flex items-center justify-between">
-        <div class="text-white/60">Total</div>
-        <div class="text-2xl font-bold">€{{ total }}</div>
-      </div>
+        <div class="mt-6 flex gap-2">
+          <button class="rounded-2xl px-4 py-2 text-sm border border-white/10 hover:bg-white/5 transition"
+                  onclick="clearCart()">Išvalyti krepšelį</button>
+        </div>
+      {% endif %}
+    </div>
 
-      <div class="mt-6">
-        <div class="text-sm text-white/60 mb-3">Apmokėjimas per PayPal</div>
-        <div id="paypal-button-container"></div>
+    <div class="rounded-3xl border border-white/10 bg-white/5 p-6">
+      <div class="text-sm text-white/60">Suma</div>
+      <div class="mt-1 text-3xl font-bold">€{{ total }}</div>
+
+      <div class="mt-5 rounded-2xl border border-white/10 bg-slate-950/25 p-4">
+        <div class="text-sm font-medium">Apmokėjimas</div>
+        <div class="text-xs text-white/60 mt-1">PayPal Checkout (intent: capture)</div>
+        <div class="mt-4" id="paypal-button-container"></div>
 
         {% if not paypal_client_id %}
-          <p class="text-sm text-rose-200 mt-3">
-            PayPal neįjungtas: trūksta PAYPAL_CLIENT_ID/PAYPAL_CLIENT_SECRET.
-          </p>
+          <div class="mt-3 text-xs text-rose-200">
+            PayPal neįjungtas: trūksta <span class="font-mono">PAYPAL_CLIENT_ID</span> / <span class="font-mono">PAYPAL_CLIENT_SECRET</span>.
+          </div>
         {% endif %}
       </div>
-    {% endif %}
+
+      <div class="mt-4 text-xs text-white/55">
+        Patarimas: pradžiai naudok <span class="font-mono">sandbox</span>.
+      </div>
+    </div>
   </div>
 {% endblock %}
 
 {% block scripts %}
 <script>
-  // Cart +/- buttons (no inline Jinja arithmetic)
   document.addEventListener('click', async (e) => {
     const btn = e.target.closest('button[data-action]');
     if (!btn) return;
@@ -67,7 +77,6 @@
     const id = btn.dataset.id;
     const qty = parseInt(btn.dataset.qty || "1", 10);
     const action = btn.dataset.action;
-
     const newQty = action === 'dec' ? (qty - 1) : (qty + 1);
 
     const r = await fetch('/api/cart/update', {
@@ -79,6 +88,13 @@
     if (!j.ok) alert(j.error || 'Klaida');
     window.location.reload();
   });
+
+  async function clearCart(){
+    const r = await fetch('/api/cart/clear', { method:'POST' });
+    const j = await r.json();
+    if (!j.ok) alert(j.error || 'Klaida');
+    window.location.reload();
+  }
 </script>
 
 {% if paypal_client_id %}
