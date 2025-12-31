@@ -1,22 +1,27 @@
+// static/snow.js
 (function snow(){
   const canvas = document.getElementById("snowCanvas");
   if (!canvas) return;
   const ctx = canvas.getContext("2d");
 
   let w, h, flakes;
+
   function resize(){
-    w = canvas.width = window.innerWidth * devicePixelRatio;
-    h = canvas.height = window.innerHeight * devicePixelRatio;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    w = canvas.width = Math.floor(window.innerWidth * dpr);
+    h = canvas.height = Math.floor(window.innerHeight * dpr);
     canvas.style.width = window.innerWidth + "px";
     canvas.style.height = window.innerHeight + "px";
-    flakes = Array.from({length: 140}, () => ({
+
+    flakes = Array.from({length: 160}, () => ({
       x: Math.random() * w,
       y: Math.random() * h,
-      r: (Math.random()*1.8 + 0.6) * devicePixelRatio,
-      s: (Math.random()*0.9 + 0.4) * devicePixelRatio,
-      a: Math.random()*0.5 + 0.2
+      r: (Math.random()*1.8 + 0.6) * dpr,
+      s: (Math.random()*0.9 + 0.4) * dpr,
+      a: Math.random()*0.55 + 0.15
     }));
   }
+
   resize();
   window.addEventListener("resize", resize);
 
@@ -29,7 +34,7 @@
       ctx.fill();
 
       f.y += f.s;
-      f.x += Math.sin(f.y * 0.002) * (0.35 * devicePixelRatio);
+      f.x += Math.sin(f.y * 0.002) * (0.35 * (window.devicePixelRatio || 1));
 
       if (f.y > h + 10) {
         f.y = -10;

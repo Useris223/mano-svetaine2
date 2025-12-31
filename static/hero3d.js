@@ -1,3 +1,4 @@
+// static/hero3d.js
 (async function () {
   const canvas = document.getElementById("hero3d");
   if (!canvas) return;
@@ -21,7 +22,6 @@
   controls.maxDistance = 10;
   controls.target.set(0, 0.35, 0);
 
-  // Lights
   const key = new THREE.DirectionalLight(0xffffff, 1.15);
   key.position.set(3, 4, 2);
   scene.add(key);
@@ -37,7 +37,6 @@
   const amb = new THREE.AmbientLight(0x7788aa, 0.28);
   scene.add(amb);
 
-  // Floor
   const floorGeo = new THREE.CircleGeometry(3.4, 96);
   const floorMat = new THREE.MeshStandardMaterial({ color: 0x0b1220, metalness: 0.15, roughness: 0.65 });
   const floor = new THREE.Mesh(floorGeo, floorMat);
@@ -45,7 +44,6 @@
   floor.position.y = -0.06;
   scene.add(floor);
 
-  // Product group
   const group = new THREE.Group();
   scene.add(group);
 
@@ -70,7 +68,6 @@
   ring.position.y = 0.42;
   group.add(ring);
 
-  // Subtle particles
   const stars = new THREE.BufferGeometry();
   const N = 700;
   const pos = new Float32Array(N * 3);
@@ -94,7 +91,6 @@
   resize();
   window.addEventListener("resize", resize);
 
-  // Hover parallax on the card
   const card = document.getElementById("heroCard");
   let mouseX = 0, mouseY = 0;
   if (card) {
@@ -102,7 +98,6 @@
       const r = card.getBoundingClientRect();
       mouseX = ((e.clientX - r.left) / r.width - 0.5);
       mouseY = ((e.clientY - r.top) / r.height - 0.5);
-      // Tilt the card
       card.style.transform = `perspective(1100px) rotateX(${(-mouseY*8).toFixed(2)}deg) rotateY(${(mouseX*10).toFixed(2)}deg) translateY(-2px)`;
     });
     card.addEventListener("mouseleave", () => {
@@ -114,7 +109,7 @@
   let spin = true;
   document.getElementById("spin3d")?.addEventListener("click", () => {
     spin = !spin;
-    window.toast?.(spin ? "3D spin ON 🌀" : "3D spin OFF 🛑");
+    window.toast?.(spin ? "Spin ON 🌀" : "Spin OFF 🛑");
   });
 
   function animate(){
@@ -125,7 +120,6 @@
     capsule.position.y = 0.72 + Math.sin(t*1.15)*0.06;
     ring.rotation.z += 0.004;
 
-    // mouse parallax
     group.rotation.x = THREE.MathUtils.lerp(group.rotation.x, -mouseY * 0.18, 0.05);
     group.rotation.z = THREE.MathUtils.lerp(group.rotation.z,  mouseX * 0.10, 0.05);
 

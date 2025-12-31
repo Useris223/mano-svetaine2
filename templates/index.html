@@ -1,51 +1,44 @@
+<!-- templates/index.html -->
 {% extends "base.html" %}
 {% block content %}
 
 <section class="grid gap-8 lg:grid-cols-2 items-center">
   <div>
     <p class="inline-flex items-center gap-2 text-xs font-medium px-3 py-1 rounded-full bg-white/5 text-white/80 border border-white/10">
-      ❄️ Winter mode • 3D hero • premium UI
+      ❄️ Sninga • 3D • gražus fonas
     </p>
 
     <h1 class="mt-4 text-4xl md:text-5xl font-bold tracking-tight">
-      TopShopp
-      <span class="bg-gradient-to-r from-indigo-300 to-fuchsia-300 bg-clip-text text-transparent">Deals</span>
-      shop’as
+      Mano
+      <span class="bg-gradient-to-r from-indigo-300 to-fuchsia-300 bg-clip-text text-transparent">svetainė</span>
     </h1>
 
     <p class="mt-4 text-white/70 leading-relaxed">
-      Svetainė kuriama, bet jau turi krepšelį, PayPal ir wow vizualą. Užvesk pele ant 3D ir kortelių.
+      Užvesk pele ant 3D ir kortelių.
     </p>
 
     <div class="mt-6 flex flex-wrap gap-3">
-      <a href="#products"
-        class="rounded-2xl px-5 py-3 font-medium bg-gradient-to-r from-indigo-500 to-fuchsia-500 text-white shadow hover:opacity-95 transition">
-        Žiūrėti produktus
-      </a>
-
       <button id="spin3d"
-        class="rounded-2xl px-5 py-3 font-medium border border-white/10 hover:bg-white/5 transition">
+        class="rounded-2xl px-5 py-3 font-medium bg-gradient-to-r from-indigo-500 to-fuchsia-500 text-white shadow hover:opacity-95 transition">
         Spin 3D
       </button>
 
       <a href="{{ discord_invite }}" target="_blank"
         class="rounded-2xl px-5 py-3 font-medium border border-white/10 hover:bg-white/5 transition">
-        💬 Prisijunk į Discord
+        Prisijunk į Discord
       </a>
     </div>
 
-    <div class="mt-6 grid grid-cols-3 gap-3 text-center">
-      <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
-        <div class="text-2xl font-bold">3D</div>
-        <div class="text-xs text-white/60">hover</div>
+    <div class="mt-8 grid gap-4 sm:grid-cols-2">
+      <div class="tiltCard rounded-3xl border border-white/10 bg-white/5 p-5" data-tilt>
+        <div class="text-sm text-white/60">Kortelė</div>
+        <div class="mt-2 text-xl font-semibold">3D hover</div>
+        <div class="mt-3 text-white/70 text-sm">Pajudink pelę virš kortelės.</div>
       </div>
-      <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
-        <div class="text-2xl font-bold">Snow</div>
-        <div class="text-xs text-white/60">live</div>
-      </div>
-      <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
-        <div class="text-2xl font-bold">PayPal</div>
-        <div class="text-xs text-white/60">checkout</div>
+      <div class="tiltCard rounded-3xl border border-white/10 bg-white/5 p-5" data-tilt>
+        <div class="text-sm text-white/60">Kortelė</div>
+        <div class="mt-2 text-xl font-semibold">Sniegas</div>
+        <div class="mt-3 text-white/70 text-sm">Sninga per visą foną.</div>
       </div>
     </div>
   </div>
@@ -60,59 +53,6 @@
         <div class="text-xs text-white/70 font-mono">hover parallax</div>
       </div>
     </div>
-  </div>
-</section>
-
-<hr class="my-10 border-white/10">
-
-<section id="products">
-  <div class="flex items-end justify-between gap-4 flex-wrap">
-    <div>
-      <h2 class="text-2xl font-semibold">Produktai</h2>
-      <p class="text-sm text-white/60">Kortelės su 3D tilt. Pridėk į krepšelį.</p>
-    </div>
-  </div>
-
-  <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-    {% for p in products %}
-    <div class="tiltCard rounded-3xl border border-white/10 bg-white/5 p-5 hover:bg-white/[0.07] transition will-change-transform"
-         data-tilt>
-      <img src="{{ p.image }}" alt="{{ p.title }}"
-           class="h-44 w-full object-cover rounded-2xl border border-white/10 mb-4"
-           loading="lazy"
-           onerror="this.style.display='none'"/>
-
-      <div class="flex items-start justify-between gap-3">
-        <div>
-          <div class="text-xs text-white/60">{{ p.brand }}</div>
-          <div class="mt-1 font-semibold text-lg">{{ p.title }}</div>
-        </div>
-        <span class="text-xs px-2 py-1 rounded-full border border-white/10 bg-white/5 text-white/70">{{ p.status }}</span>
-      </div>
-
-      <div class="mt-4 grid grid-cols-2 gap-3 text-sm">
-        <div class="rounded-2xl border border-white/10 bg-slate-950/20 p-3">
-          <div class="text-white/50 text-xs">Price</div>
-          <div class="font-semibold">€{{ p.price }}</div>
-        </div>
-        <div class="rounded-2xl border border-white/10 bg-slate-950/20 p-3">
-          <div class="text-white/50 text-xs">Ship</div>
-          <div class="font-semibold">{{ p.ship }}</div>
-        </div>
-      </div>
-
-      <div class="mt-4 flex gap-2">
-        <button class="rounded-2xl px-4 py-2 text-sm bg-white text-slate-950 font-medium hover:opacity-90 transition"
-                onclick="addToCart('{{ p.id }}')"
-                {% if p.status != "available" %}disabled{% endif %}>
-          Į krepšelį
-        </button>
-        <a href="/cart" class="rounded-2xl px-4 py-2 text-sm border border-white/10 hover:bg-white/5 transition">
-          Krepšelis
-        </a>
-      </div>
-    </div>
-    {% endfor %}
   </div>
 </section>
 

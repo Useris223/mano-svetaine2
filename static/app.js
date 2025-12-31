@@ -1,4 +1,4 @@
-// Toast
+// static/app.js
 function toast(msg) {
   const el = document.getElementById('toast');
   if (!el) return;
@@ -9,26 +9,12 @@ function toast(msg) {
 }
 window.toast = toast;
 
-// Add to cart
-async function addToCart(id) {
-  try {
-    const r = await fetch('/api/cart/add', {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({ id, qty: 1 })
-    });
-    const j = await r.json();
-    toast(j.ok ? 'Įdėta į krepšelį ✅' : (j.error || 'Klaida'));
-  } catch {
-    toast('Network error ❌');
-  }
-}
-
 // 3D tilt cards
 (function initTilt(){
   const cards = document.querySelectorAll('[data-tilt]');
-  const max = 10; // degrees
+  const max = 10;
   cards.forEach(card => {
+    card.style.transformStyle = "preserve-3d";
     card.addEventListener('mousemove', (e) => {
       const r = card.getBoundingClientRect();
       const x = (e.clientX - r.left) / r.width - 0.5;
