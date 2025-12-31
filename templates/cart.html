@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1 class="text-3xl font-bold">Krepšelis</h1>
+
+  <div class="mt-6 rounded-3xl border border-white/10 bg-white/5 p-6">
+    {% if items|length == 0 %}
+      <p class="text-white/70">Krepšelis tuščias.</p>
+      <a class="inline-block mt-4 rounded-2xl px-5 py-3 bg-white text-slate-950 font-medium" href="/">Grįžti į shop</a>
+    {% else %}
+      <div class="grid gap-3">
+        {% for it in items %}
+          <div class="flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-slate-950/20 p-4">
+            <div>
+              <div class="font-semibold">{{ it.title }}</div>
+              <div class="text-xs text-white/60">€{{ it.price }} • qty <span class="font-mono">{{ it.qty }}</span></div>
+            </div>
+
+            <div class="text-right">
+              <div class="font-semibold">€{{ it.line_total }}</div>
+
+              <div class="mt-2 flex gap-2 justify-end">
+                <button
+                  class="px-3 py-1 rounded-xl border border-white/10 hover:bg-white/5"
+                  data-action="dec"
+                  data-id="{{ it.id }}"
+                  data-qty="{{ it.qty }}"
+                >-</button>
+
+                <button
+                  class="px-3 py-1 rounded-xl border border-white/10 hover:bg-white/5"
+                  data-action="inc"
+                  data-id="{{ it.id }}"
+                  data-qty="{{ it.qty }}"
+                >+</button>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+
+      <div class="mt-6 flex items-center justify-between">
+        <div class="text-white/60">Total</div>
+        <div class="text-2xl font-bold">€{{ total }}</div>
+      </div>
+
+      <div class="mt-6">
+        <div class="text-sm text-white/60 mb-3">Apmokėjimas per PayPal</div>
+        <div id="paypal-button-container"></div>
+
+        {% if not paypal_client_id %}
+          <p class="text-sm text-rose-200 mt-3">
+            PayPal neįjungtas: trūksta PAYPAL_CLIENT_ID/PAYPAL_CLIENT_SECRET.
+          </p>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // Cart +/- buttons (no inline Jinja arithmetic)
+  document.addEventListener('click', async (e) => {
+    const btn = e.target.closest('button[data-action]');
+    if (!btn) return;
+
+    const id = btn.dataset.id;
+    const qty = parseInt(btn.dataset.qty || "1", 10);
+    const action = btn.dataset.action;
+
+    const newQty = action === 'dec' ? (qty - 1) : (qty + 1);
+
+    const r = await fetch('/api/cart/update', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ id, qty: newQty })
+    });
+    const j = await r.json();
+    if (!j.ok) alert(j.error || 'Klaida');
+    window.location.reload();
+  });
+</script>
+
+{% if paypal_client_id %}
+  <script src="https://www.paypal.com/sdk/js?client-id={{ paypal_client_id }}&currency=EUR&intent=capture"></script>
+  <script>
+    paypal.Buttons({
+      createOrder: async () => {
+        const r = await fetch('/api/paypal/create-order', { method: 'POST' });
+        const j = await r.json();
+        if (!j.ok) throw new Error(j.error || 'Create order failed');
+        return j.id;
+      },
+      onApprove: async (data) => {
+        const r = await fetch('/api/paypal/capture-order', {
+          method: 'POST',
+          headers: {'Content-Type':'application/json'},
+          body: JSON.stringify({ orderID: data.orderID })
+        });
+        const j = await r.json();
+        if (!j.ok) { alert(j.error || 'Capture failed'); return; }
+        window.location.href = '/success?order_id=' + encodeURIComponent(data.orderID);
+      }
+    }).render('#paypal-button-container');
+  </script>
+{% endif %}
+{% endblock %}
