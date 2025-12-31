@@ -1,19 +1,124 @@
-<style>
-  .snow {
-    background-image:
-      radial-gradient(2px 2px at 20px 30px, rgba(255,255,255,.9) 50%, transparent 55%),
-      radial-gradient(2px 2px at 90px 80px, rgba(255,255,255,.75) 50%, transparent 55%),
-      radial-gradient(1.5px 1.5px at 140px 120px, rgba(255,255,255,.85) 50%, transparent 55%),
-      radial-gradient(1.5px 1.5px at 50px 140px, rgba(255,255,255,.65) 50%, transparent 55%),
-      radial-gradient(2px 2px at 160px 40px, rgba(255,255,255,.8) 50%, transparent 55%);
-    background-size: 200px 200px;
-    animation: snowMove 6s linear infinite;
-    opacity: .55;
-    filter: drop-shadow(0 0 6px rgba(255,255,255,.15));
-  }
+<!doctype html>
+<html lang="lt">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>{{ title }}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 
-  @keyframes snowMove {
-    from { background-position: 0 0; }
-    to   { background-position: 0 220px; }
-  }
-</style>
+  <style>
+    /* Background glow + grain */
+    .glow{
+      background:
+        radial-gradient(900px 360px at 15% 0%, rgba(99,102,241,.30), transparent 62%),
+        radial-gradient(820px 320px at 95% 10%, rgba(217,70,239,.22), transparent 58%),
+        radial-gradient(980px 380px at 50% 115%, rgba(56,189,248,.16), transparent 62%);
+    }
+    .grain:before{
+      content:"";
+      position:fixed; inset:0;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='.12'/%3E%3C/svg%3E");
+      mix-blend-mode: overlay;
+      pointer-events:none;
+    }
+  </style>
+</head>
+
+<body class="min-h-screen bg-slate-950 text-white glow grain">
+
+  <!-- Snow canvas full page -->
+  <canvas id="snowCanvas" class="fixed inset-0 w-full h-full pointer-events-none z-10"></canvas>
+
+  <!-- Notice banner -->
+  {% if site_notice %}
+  <div class="relative z-20 border-b border-white/10 bg-amber-400/10">
+    <div class="mx-auto max-w-6xl px-4 py-2 text-sm text-amber-100 flex items-center justify-between gap-3">
+      <div class="truncate">{{ site_notice }}</div>
+      <button class="text-xs px-3 py-1 rounded-full border border-amber-300/20 hover:bg-amber-300/10"
+              onclick="this.closest('div').parentElement.style.display='none'">
+        Supratau
+      </button>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Top bar -->
+  <header class="sticky top-0 z-30 backdrop-blur border-b border-white/10 bg-slate-950/60">
+    <div class="mx-auto max-w-6xl px-4 py-3 flex items-center justify-between gap-3">
+      <a href="/" class="flex items-center gap-3 group">
+        <img src="/static/logo.svg" alt="Logo" class="h-10 w-10 rounded-2xl shadow group-hover:opacity-95 transition"/>
+        <div>
+          <div class="font-semibold leading-5">TopShopp Deals</div>
+          <div class="text-xs text-white/60">3D • snow • shop</div>
+        </div>
+      </a>
+
+      <div class="flex items-center gap-2">
+        <button id="themeBtn"
+          class="rounded-xl px-3 py-2 text-sm border border-white/10 hover:bg-white/5 transition">
+          🌙/☀️
+        </button>
+
+        <a href="{{ discord_invite }}"
+           target="_blank"
+           class="hidden sm:inline-flex rounded-xl px-4 py-2 text-sm border border-white/10 hover:bg-white/5 transition">
+          💬 Prisijunk į Discord
+        </a>
+
+        <a href="/cart"
+          class="rounded-xl px-4 py-2 text-sm bg-white text-slate-950 hover:opacity-90 transition font-medium">
+          🛒 Krepšelis
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="relative z-20 mx-auto max-w-6xl px-4 py-10">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="relative z-20 mx-auto max-w-6xl px-4 pb-10 text-xs text-white/50">
+    <div class="rounded-3xl border border-white/10 bg-white/5 p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div>
+        <div class="font-medium text-white/70">© {{ year }} TopShopp Deals</div>
+        <div class="mt-1">Demo shopas su 3D ir sniegu.</div>
+      </div>
+      <div class="flex items-center gap-2">
+        <a href="{{ discord_invite }}" target="_blank" class="rounded-2xl px-4 py-2 border border-white/10 hover:bg-white/5">
+          💬 Prisijunk į Discord
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Toast -->
+  <div id="toast" class="fixed bottom-5 left-1/2 -translate-x-1/2 hidden z-50">
+    <div class="rounded-2xl px-4 py-3 shadow-lg border border-white/10 bg-slate-950/90 text-sm"></div>
+  </div>
+
+  <script src="/static/app.js"></script>
+  <script src="/static/snow.js"></script>
+  <script src="/static/hero3d.js"></script>
+
+  <script>
+    // Dark/Light toggle
+    const key = "theme";
+    const saved = localStorage.getItem(key) || "dark";
+    function apply(t){
+      document.body.classList.toggle("bg-slate-950", t==="dark");
+      document.body.classList.toggle("text-white", t==="dark");
+      document.body.classList.toggle("bg-slate-50", t==="light");
+      document.body.classList.toggle("text-slate-900", t==="light");
+      localStorage.setItem(key, t);
+      window.toast?.(t==="dark" ? "Dark mode 🌙" : "Light mode ☀️");
+    }
+    apply(saved);
+    document.getElementById("themeBtn")?.addEventListener("click", () => {
+      const cur = localStorage.getItem(key) || "dark";
+      apply(cur === "dark" ? "light" : "dark");
+    });
+  </script>
+
+  {% block scripts %}{% endblock %}
+</body>
+</html>

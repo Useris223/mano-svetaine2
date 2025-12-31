@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="rounded-3xl border border-white/10 bg-white/5 p-10 text-center">
+  <div class="inline-flex items-center justify-center h-14 w-14 rounded-2xl bg-emerald-400/15 border border-emerald-400/20 mx-auto">
+    ✅
+  </div>
+  <div class="mt-4 text-3xl font-bold">Apmokėjimas pavyko</div>
+  <p class="text-white/60 mt-3">Order ID: <span class="font-mono text-white/80">{{ order_id }}</span></p>
+
+  <div class="mt-8 flex items-center justify-center gap-3">
+    <a class="rounded-2xl px-5 py-3 bg-white text-slate-950 font-medium hover:opacity-90 transition" href="/">
+      Grįžti į shop
+    </a>
+    <a class="rounded-2xl px-5 py-3 border border-white/10 hover:bg-white/5 transition" href="{{ discord_invite }}" target="_blank">
+      💬 Prisijunk į Discord
+    </a>
+  </div>
+</div>
+{% endblock %}

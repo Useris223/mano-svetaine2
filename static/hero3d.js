@@ -1,6 +1,3 @@
-// static/hero3d.js
-// 3D hero (Three.js) + snow overlay. No build step.
-
 (async function () {
   const canvas = document.getElementById("hero3d");
   if (!canvas) return;
@@ -52,7 +49,6 @@
   const group = new THREE.Group();
   scene.add(group);
 
-  // Glass capsule
   const capsuleGeo = new THREE.CapsuleGeometry(0.55, 1.2, 10, 24);
   const capsuleMat = new THREE.MeshPhysicalMaterial({
     color: 0xffffff,
@@ -67,7 +63,6 @@
   capsule.position.y = 0.72;
   group.add(capsule);
 
-  // Neon ring
   const ringGeo = new THREE.TorusGeometry(0.92, 0.075, 18, 72);
   const ringMat = new THREE.MeshStandardMaterial({ color: 0x7c3aed, metalness: 0.65, roughness: 0.25 });
   const ring = new THREE.Mesh(ringGeo, ringMat);
@@ -75,21 +70,21 @@
   ring.position.y = 0.42;
   group.add(ring);
 
-  // Floating particles in 3D space (subtle)
+  // Subtle particles
   const stars = new THREE.BufferGeometry();
   const N = 700;
   const pos = new Float32Array(N * 3);
-  for (let i = 0; i < N; i++) {
-    pos[i * 3 + 0] = (Math.random() - 0.5) * 18;
-    pos[i * 3 + 1] = Math.random() * 8;
-    pos[i * 3 + 2] = (Math.random() - 0.5) * 18;
+  for (let i=0;i<N;i++){
+    pos[i*3+0] = (Math.random()-0.5)*18;
+    pos[i*3+1] = Math.random()*8;
+    pos[i*3+2] = (Math.random()-0.5)*18;
   }
   stars.setAttribute("position", new THREE.BufferAttribute(pos, 3));
   const starMat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.018, opacity: 0.5, transparent: true });
   const points = new THREE.Points(stars, starMat);
   scene.add(points);
 
-  function resize() {
+  function resize(){
     const w = canvas.clientWidth;
     const h = canvas.clientHeight;
     renderer.setSize(w, h, false);
@@ -99,27 +94,40 @@
   resize();
   window.addEventListener("resize", resize);
 
-  canvas.addEventListener("dblclick", () => {
-    controls.target.set(0, 0.35, 0);
-    camera.position.set(3.2, 1.7, 6.6);
-  });
-
-  let spin = true;
-  const spinBtn = document.getElementById("spin3d");
-  if (spinBtn) {
-    spinBtn.addEventListener("click", () => {
-      spin = !spin;
-      if (window.toast) window.toast(spin ? "3D spin ON 🌀" : "3D spin OFF 🛑");
+  // Hover parallax on the card
+  const card = document.getElementById("heroCard");
+  let mouseX = 0, mouseY = 0;
+  if (card) {
+    card.addEventListener("mousemove", (e) => {
+      const r = card.getBoundingClientRect();
+      mouseX = ((e.clientX - r.left) / r.width - 0.5);
+      mouseY = ((e.clientY - r.top) / r.height - 0.5);
+      // Tilt the card
+      card.style.transform = `perspective(1100px) rotateX(${(-mouseY*8).toFixed(2)}deg) rotateY(${(mouseX*10).toFixed(2)}deg) translateY(-2px)`;
+    });
+    card.addEventListener("mouseleave", () => {
+      mouseX = mouseY = 0;
+      card.style.transform = `perspective(1100px) rotateX(0deg) rotateY(0deg) translateY(0px)`;
     });
   }
 
-  function animate() {
+  let spin = true;
+  document.getElementById("spin3d")?.addEventListener("click", () => {
+    spin = !spin;
+    window.toast?.(spin ? "3D spin ON 🌀" : "3D spin OFF 🛑");
+  });
+
+  function animate(){
     requestAnimationFrame(animate);
     controls.update();
 
     const t = performance.now() * 0.001;
-    capsule.position.y = 0.72 + Math.sin(t * 1.15) * 0.06;
+    capsule.position.y = 0.72 + Math.sin(t*1.15)*0.06;
     ring.rotation.z += 0.004;
+
+    // mouse parallax
+    group.rotation.x = THREE.MathUtils.lerp(group.rotation.x, -mouseY * 0.18, 0.05);
+    group.rotation.z = THREE.MathUtils.lerp(group.rotation.z,  mouseX * 0.10, 0.05);
 
     if (spin) group.rotation.y += 0.010;
     else group.rotation.y += (0.30 - group.rotation.y) * 0.03;
